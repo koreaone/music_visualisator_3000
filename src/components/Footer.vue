@@ -25,10 +25,10 @@ export default {
     SongControl: function (){
       if(this.playstate == true){
         this.pauseSong();
-        this.playicon = 'pause'
+        this.playicon = 'play_arrow'
       } else {
         this.playSong();
-        this.playicon = 'play_arrow'
+        this.playicon = 'pause'
       }
     }
   }

@@ -20,13 +20,11 @@ const mutations = {
     console.log(state.drawerState)
   },
   [types.PLAY_SONG] (state){
-    console.log(state.p5Instance)
-    console.log(state.p5Instance.song)
-    console.log(state.p5Instance.sketch())
-    console.log(state.p5Instance.sketch().playMusic())
+    console.log("Mutation play_song")
     state.p5Instance.playMusic();
   },
   [types.PAUSE_SONG] (state){
+    console.log("Mutation stop_song")
     state.p5Instance.pauseMusic();
   },
   [types.INSTANCIATE_P5](state){
@@ -40,19 +38,21 @@ const mutations = {
       p.preload = function(){
         console.log("P5 Preload")
         song = p.loadSound('./Awolation - Sail.mp3')
-        //console.log(song)
+
       }
 
       p.setup = function () {
-        
         console.log("P5 Setup")
 
         p.createCanvas(document.getElementById("anim-holder").clientWidth, document.getElementById("anim-holder").clientHeight - 70);
         p.angleMode(P5.DEGREES)
-        //playButton = p.select('playbtn')
-        console.log(playButton)
+        song.stop()
+        state.playstate = false;
+
+
         analyser = new P5.Amplitude();
         FFT = new P5.FFT(0.9, 64);
+        
       }
 
 
@@ -70,16 +70,17 @@ const mutations = {
       p.windowResized= function () {
         p.resizeCanvas(document.getElementById("anim-holder").clientWidth, document.getElementById("anim-holder").clientHeight);
       }
+
       
-      function playMusic() {
+      p.playMusic = function () {
         console.log("P5 Play song")
         song.play();
         state.playstate = true;
       }
       
-      function pauseMusic() {
+      p.pauseMusic = function () {
         console.log("P5 Pause song")
-        song.stop();
+        song.pause();
         state.playstate = false;
       }
       
@@ -102,7 +103,12 @@ const actions = {
         commit(types.OPEN_DRAWER)
       },
       instanciateP5({ commit, state}){
-        commit(types.INSTANCIATE_P5)
+        if(state.p5Instance == null){
+          commit(types.INSTANCIATE_P5)
+        } else {
+          console.log("ERROR p5Instanciate : p5instance already exists")
+        }
+        
       },
       playSong({commit, state}){
         commit(types.PLAY_SONG)

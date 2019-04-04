@@ -21,10 +21,8 @@ import { mapGetters, mapActions } from 'vuex'
    			]),
     },
     mounted: function () {
-      if(this.isInit == false){
-        this.instanciateP5()
-      }
-      else{
+      console.log("Animation mounted")
+      if (document.getElementById("anime").children.length == 0) { 
         document.getElementById("anime").appendChild(this.p5Instance.canvas)
       }
       
