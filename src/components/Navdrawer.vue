@@ -1,13 +1,18 @@
 <template>
-  
+  <v-navigation-drawer app clipped permanent width="200" :value="drawer" class="grey lighten-4 pb-0" >
+    <p>navbar</p>
+
+  </v-navigation-drawer>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'Navdrawer',
-  props: {
-    msg: String 
-  }
+  computed: mapGetters({
+    	drawer: 'drawerState',
+		}),
 }
 </script>
 
