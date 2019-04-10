@@ -11,25 +11,20 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Footer',
   data: () => ({
-        playicon : 'play_arrow'
+        
   }),
   computed: {
      ...mapGetters({
         playstate : 'getPlaystate',
+        playicon : 'getPlayicon'
      })
   },
   methods : {
     ...mapActions([
-   	 		'playSong', 'pauseSong'
+   	 		'toggleSong'
    			]),
     SongControl: function (){
-      if(this.playstate == true){
-        this.pauseSong();
-        this.playicon = 'play_arrow'
-      } else {
-        this.playSong();
-        this.playicon = 'pause'
-      }
+      this.toggleSong();
     }
   }
 }
