@@ -31,13 +31,14 @@ export default {
    	 		'instanciateP5'
    			]),
   },
-  beforeMount : function() {
-    console.log("App.vue premount")
-    this.instanciateP5()
+  created : function() {
+    console.log("App.vue created");
+    this.instanciateP5();
+    console.log("app.vue p5 instanciated");
   },
   mounted: function () {
     console.log("App.vue mounted")
-    
+    //this.instanciateP5()
   }
 }
 </script>

@@ -17,15 +17,25 @@ import { mapGetters, mapActions } from 'vuex'
     },
     methods: {
     ...mapActions([
-   	 		'instanciateP5'
+   	 		'startAnimation','stopAnimation'
    			]),
     },
     mounted: function () {
       console.log("Animation mounted")
-      if (document.getElementById("anime").children.length == 0) { 
-        document.getElementById("anime").appendChild(this.p5Instance.canvas)
+      if(this.isInit){
+        this.startAnimation();
+        if (document.getElementById("anime").children.length == 0) { 
+          console.log("reinstancing canvas");
+          document.getElementById("anime").appendChild(this.p5Instance.canvas)
+        } 
       }
       
+      
+    },
+    beforeDestroy: function(){
+      console.log("Animation component destory");
+      //this.stopAnimation();
+
     }
 }
 </script>
