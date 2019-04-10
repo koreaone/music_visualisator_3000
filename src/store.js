@@ -30,27 +30,28 @@ const mutations = {
   [types.INSTANCIATE_P5](state){
     var sketch = function (p) {
       let song;
-      let FFT;
-      var analyser;
-      let dropzone;
-      let playButton;
+      var FFT, amplitude, peakDetector;
+      var height;
+      var width;
 
       p.preload = function(){
         console.log("P5 Preload")
-        song = p.loadSound('./Awolation - Sail.mp3')
+        song = p.loadSound('./Cage The Elephant - Come A Little Closer.mp3')
 
       }
 
+
       p.setup = function () {
         console.log("P5 Setup")
-
-        p.createCanvas(document.getElementById("anim-holder").clientWidth, document.getElementById("anim-holder").clientHeight - 70);
-        p.angleMode(P5.DEGREES)
+        width = document.getElementById("anim-holder").clientWidth;
+        height = document.getElementById("anim-holder").clientHeight  - 70;
+        p.createCanvas(width, height);
         song.stop()
         state.playstate = false;
 
-
-        analyser = new P5.Amplitude();
+        amplitude = new P5.Amplitude();
+        //amplitude.setInput(song);
+        peakDetector = new P5.PeakDetect();
         FFT = new P5.FFT(0.9, 64);
         
       }
@@ -58,13 +59,42 @@ const mutations = {
 
       let i = 0;
       let j = 80;
+      let h = 120;
+      var levels = 0;
+      var spectrum = []
       p.draw = function () {
-        //bgcolor = Color(51, 0, i % 255)
-        p.background(255)
-        i +=1;
-        j += 2;
-        p.fill((100 + i )% 255, (29 + j)% 255, 47)
-        p.ellipse(p.width / 2, p.height / 2, 100, 100)
+        
+        levels = amplitude.getLevel();
+        spectrum = FFT.analyze();
+        peakDetector.update(FFT);
+        p.background(p.map(levels, 0, 1, 0, 255));
+        
+        
+        
+        p.fill('rgba(199,0,57,0.8)');
+        p.stroke('rgba(199,0,57,0.8)');
+        p.strokeWeight(1);
+
+        for(var i = 0; i < spectrum.length; i++){
+            var x = p.map(i, 0, spectrum.length, 0,width);
+            var h = -height + p.map(spectrum[i], 0, 255, height , 0.2 * height);
+            p.rect(x, height, (width / spectrum.length) , h )
+        }
+
+        var waveform = FFT.waveform();
+        p.noFill();
+        p.beginShape();
+
+        p.stroke(255,255,255); // waveform is white
+        p.strokeWeight(1);
+        for (var i = 0; i< waveform.length; i+=5){
+            var x = p.map(i, 0, waveform.length, 0, width);
+            var y = p.map( waveform[i]/5, -1, 1, 0, height);
+            p.vertex(x,y);
+        }
+        p.endShape();
+
+
       }
 
       p.windowResized= function () {
@@ -84,7 +114,10 @@ const mutations = {
         state.playstate = false;
       }
       
-      
+      p.normalCircle = function (){
+        
+      }
+
     }
     state.p5Instance = new P5(sketch, "anime" );
     state.isInit = true;
