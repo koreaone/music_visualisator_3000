@@ -1,18 +1,25 @@
 <template>
-    <div id="anim-holder" ref="anim-holder" style="height:100%;width:100%;top:0;backgroud:red"> 
-      <div id='anime' ></div>
+    <div style="height:100%; width:100%">
+      <div id="anim-holder" ref="anim-holder" style="height:100%;width:100%;top:0;backgroud:red"> 
+        <div id='anime' ></div>
+      </div>
     </div>
+    
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
   export default {
+    data: () => ({
+
+    }),
     computed: {
      ...mapGetters({
         isInit : 'IsInit',
         p5Instance: 'Getp5Instance',
         showDrop: 'getDropzoneState',
+        showDrawer : 'GetDrawerstate'
      })
     },
     methods: {
