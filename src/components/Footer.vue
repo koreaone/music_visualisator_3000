@@ -1,9 +1,9 @@
 <template>
   <v-footer fixed height="70px" class="pa-3 grey darken-3 white--text">
-     <v-layout row justify-center>
+    <v-layout row justify-center>
       <v-dialog v-model="dialog" scrollable max-width="300px">
         <template v-slot:activator="{ on }">
-          <v-btn icon dark v-on="on" class="white--text" id='opendrawbtn'>
+          <v-btn icon dark v-on="on" class="white--text mx-4" id='opendrawbtn'>
             <v-icon>menu</v-icon>
           </v-btn>
         </template>
@@ -17,6 +17,7 @@
               <v-radio label="Flower Points" value="radial_points"></v-radio>
               <v-radio label="Flower Shape" value="radial_triangles"></v-radio>
               <v-radio label="Simple Bars" value="simple_bar"></v-radio>
+              <v-radio label="Simple Circle" value="simple_circle"></v-radio>
             </v-radio-group>
           </v-card-text>
           <v-divider></v-divider>
@@ -27,9 +28,30 @@
         </v-card>
       </v-dialog>
     </v-layout>
-    <v-btn icon @click.native="console.log(2)" class="white--text" id='fileinputbtn'>
-      <v-icon>get_app</v-icon> 
-    </v-btn>
+    <v-layout row justify-center>
+      <v-dialog v-model="dialog2" max-width="600px">
+        <template v-slot:activator="{ on }">
+          <v-btn icon dark v-on="on" class="white--text mx-4" id='fileinputbtn'>
+            <v-icon>get_app</v-icon> 
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title><b>Input a file</b></v-card-title>
+          <v-card-actions>
+            <fileinput v-model="file" @input="checkfile"></fileinput>
+          </v-card-actions>
+          <v-divider></v-divider>
+          <v-card flat tile height="300px" width="100%">
+            
+          </v-card>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn color="blue darken-1" flat @click="dialog2 = false">Close</v-btn>
+            <v-btn color="blue darken-1" :disabled="!load_song_ready" flat @click="loadfile">Load</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-layout>
     <v-btn icon @click.native="SongControl()" class="white--text" id='playbtn'>
       <v-icon>{{ playicon }}</v-icon>
     </v-btn>
@@ -48,16 +70,23 @@
   </v-footer>
 </template>
 <script>
+import fileinput from "./file_input.vue";
+
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'Footer',
+  components: {
+    fileinput
+  },
   data: () => ({
     volumeFooter : 5,
     seek : 0,
-    anim_1: '',
-    dialog: false
-    
+    anim_1: 'radial_lines',
+    dialog: false,
+    dialog2: false,
+    file: null,
+    load_song_ready : false
   }),
   computed: {
      ...mapGetters({
@@ -81,12 +110,12 @@ export default {
      },
      trackProgress () {
       if (this.duration == 0) return 0
-      //console.log(this.duration + " " + this.seek)
       return (this.seek * 100 )/ this.duration      
     }, 
     formatedDuration(){
       return this.formatTime(this.duration)
-    }
+    },
+
 
   }, 
   watch: {
@@ -103,9 +132,9 @@ export default {
   },
   methods : {
     ...mapActions([
-   	 		'toggleDrawer','toggleSong','toggleMute' ,'setVolume', 'setTime', 'setAnim'
+   	 		'toggleDrawer','toggleSong','toggleMute' ,'setVolume', 'setTime', 'setAnim', 'loadFile'
          ]),
-    SongControl: function (){
+    SongControl: function(){
       this.toggleSong();
     },
     setVolumeFooter: function(){
@@ -144,7 +173,25 @@ export default {
     changeAnimation: function(){
       this.dialog = false;
       this.setAnim({option_1 : this.anim_1});
+    },
+    checkfile: function(){
+      if(this.file.type == 'audio/mpeg'){
+        this.load_song_ready = true;
+      } else {
+        window.alert("File must be an audio file")
+        this.file = null;
+        this.load_song_ready = false;
+        this.dialog2 = false;
+      }
+    },
+    loadfile: function(){
+      if(this.load_song_ready){
+        var payload = {file: this.file}
+        this.loadFile(payload);
+        this.dialog2 = false;
+      }
     }
+
   }
 }
 </script>
@@ -160,4 +207,18 @@ export default {
 .v-input__append-outer .v-icon, .v-input__prepend-outer .v-icon{
   color:white
 }
+  
+  .file-select > .select-button {
+    padding: 1rem;
+
+    color: white;
+    background-color: #2EA169;
+  
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .file-select > input[type="file"] {
+    display: none;
+  }
 </style>

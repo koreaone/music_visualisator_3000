@@ -8,22 +8,29 @@ Vue.use(Vuex)
 
 
 const state = {
-  drawerState : false,
-  p5Instance : null,
+  drawerState : false,              
+  p5Instance : null,                //Defines the object responsible for animation
   isInit : false,
-  playstate: false,
-  pausestate : false,
-  playicon : 'play_arrow',
-  volumeScale :  5,
-  muted : false,
-  previousVolume : 0,
-  seek : 0,
-  currentSongDuration : 0,
-  anim_choice : 'radial_lines'
-
+  playstate: false,                 //Defines if player is in play mode  --UNUSED
+  pausestate : false,               //Defines if player is in pause mode  -- UNUSED
+  playicon : 'play_arrow',          //Icon of player 
+  volumeScale :  5,                 //Defines current volume 
+  muted : false,                    //Defines muted state
+  previousVolume : 0,               //If muted, previous volume
+  seek : 0,                         //Position of player in current song in seconds
+  currentSongDuration : 0,          //Duration of current song in seconds
+  anim_choice : 'radial_lines',     //Name of current animation
+  anim_ready :false,                //Set when animation is ready to be played
+  song_mode : 0,                    //Defines song input -- Default is 0 -> from current library -- 1 -> is user input
+  input_file : null,
+  index_library : 0,
+  music_library : [
+    {title:"Damso -  Macarena.mp3", filename: "Damso -  Macarena.mp3"},
+    {title:"Mome - Aloha", filename: "Mome - Aloha.mp3"},
+    {title: "Awolation - Sail", filename: "Awolation - Sail.mp3"},
+    {title: "Cage The Elephant - Come A Little Closer", filename: "Cage The Elephant - Come A Little Closer.mp3"} 
+  ]
 }
-
-
 
 const mutations = {
   [types.TOGGLE_DRAWER] (state){
@@ -54,10 +61,16 @@ const mutations = {
     console.log("Mutation SET_TIME_SONG " + timeCue)
     state.p5Instance.jumpMusic(timeCue);
   },
-  [types.SET_ANIM] (state, { option_1 }){
-    console.log("Mutation SET_ANIM " + option_1)
-    state.anim_choice = option_1
-    //state.p5Instance.setAnimation();
+  [types.LOAD_FILE] (state, {file}){
+    state.input_file = file;
+    state.index_library = -1;
+    state.song_mode = 1;
+    state.p5Instance.loadSong();
+  },
+  [types.LOAD_LOCAL_FILE] (state, {index}){
+    state.index_library = index;
+    state.song_mode = 0;
+    state.p5Instance.loadSong();
   },
   [types.SET_MUTED] (state){
     console.log("Mutation SET_MUTED")
@@ -71,6 +84,11 @@ const mutations = {
       }
       state.p5Instance.setSongVolume();
   },
+  [types.SET_ANIM] (state, { option_1 }){
+    console.log("Mutation SET_ANIM " + option_1)
+    state.anim_choice = option_1;
+    state.p5Instance.setAnimationParameters();
+  },
   [types.INSTANCIATE_P5](state){
     var sketch = function (p) {
       
@@ -80,9 +98,19 @@ const mutations = {
         height = document.getElementById("anim-holder").clientHeight  - 70;
       }
 
+      p.loadSong = function(){
+        if(state.song_mode == 0){
+          song = p.loadSound('./' + state.music_library[state.index_library].filename);
+          console.log("Now loading "+ state.music_library[state.index_library].filename);
+        } else if (state.song_mode == 1){
+          song = p.loadSound(state.input_file);
+          console.log("Now load user file :" + state.input_file.name);
+        }
+      }
+
       p.preload = function(){
         console.log("P5 Preload")
-        song = p.loadSound('./Mome - Aloha.mp3')
+        song = p.loadSound('./Damso -  Macarena.mp3')
         if(song.isLoaded()){
           state.currentSongDuration = song.duration()
         }
@@ -102,8 +130,7 @@ const mutations = {
         DoAnimation = false;
         p.noLoop()
       }
-
-      
+ 
       //P5 Keypressed
       p.keyPressed = function() {
         if (p.keyCode === p.ENTER) {
@@ -212,20 +239,34 @@ const mutations = {
         p.angleMode(p.RADIANS);
       }
 
+
+      p.setAnimationParameters = function(){
+        switch(state.anim_choice){
+          case 'simple_circle':
+            p.setAngleDegree();
+            break;
+          default:
+            p.setAngleRadiant();
+            break;
+        }
+      }
+
       //P5 Setup
       p.setup = function () {
         console.log("P5 Setup Start")
         p.frameRate(30);
         //If loaded on page /animation or not
         if(document.getElementById("anim-holder") != null){
-          console.log("1")
+          //console.log("1")
           p.resetHeight();
           p.createCanvas(width, height);
         } else {
-          console.log("2");
+          //console.log("2");
           p.createCanvas(200, 200);
           p.noLoop();
         }
+        
+        
         //Set song on pause
         song.stop();
         state.playstate = false;
@@ -235,7 +276,8 @@ const mutations = {
         //Setting up song analysers
         amplitude = new P5.Amplitude();
         FFT = new P5.FFT(0.9, binCount);
-        console.log("P5 Setup Done")
+        console.log("P5 Setup Done");
+        state.anim_ready = true;
       }
 
       //P5 Draw
@@ -260,6 +302,10 @@ const mutations = {
               break;
             case 'simple_bar':
               p.freqBars();
+              break;
+            case 'simple_circle':
+              p.SimpleCircle();
+              break;
             default:
               break;
           }
@@ -377,7 +423,6 @@ const mutations = {
       p.radialFigure_lines = function(maxRadius, offset, hexColor, grey){
         p.stroke(hexColor);
         p.strokeWeight(levels * 3.5);
-        p.fill(grey * levels)
         p.beginShape();
         var minRadius = 0;
         for (var i = 0; i < spectrum.length-1; i+=2) {
@@ -427,6 +472,22 @@ const mutations = {
         p.endShape();
       }
 
+      p.SimpleCircle = function(){
+        p.noStroke();
+        p.fill(255)
+        p.translate(width / 2, height / 2);
+        p.beginShape();
+        for (var i = 0; i < spectrum.length; i+=1) {
+          var angle = p.map(i, 0, spectrum.length, 0, 360 );
+          var amp = spectrum[i];
+          var r = p.map(amp, 0, 256, 20, 300 + levels * 400);
+          var x = r * p.cos(angle);
+          var y = r * p.sin(angle);
+          p.vertex(x, y);
+        }
+        p.endShape();
+      }
+
       p.freqBars = function(){
         p.fill('rgba(199,0,57,0.8)');
         p.stroke('rgba(199,0,57,0.8)');
@@ -434,7 +495,7 @@ const mutations = {
 
         for(var i = 0; i < spectrum.length; i++){
             var x = p.map(i, 0, spectrum.length, 0,width);
-            var h = -height + p.map(spectrum[i], 0, binCount, height , 0.2 * height);
+            var h = -height + p.map(spectrum[i], 0, binCount, height , 0.4 * height);
             p.rect(x, height, (width / spectrum.length) , h )
         }
       }
@@ -458,7 +519,7 @@ const mutations = {
         p.background(p.map(levels, 0, 1, 0, 255));
       }
     }
-    state.p5Instance = new P5(sketch, "anime" );
+    state.p5Instance = new P5(sketch, "anime");
     state.isInit = true;
   }
 }
@@ -473,7 +534,11 @@ const getters = {
       getSongVolume : state => state.volumeScale,
       getMutedState : state => state.muted,
       getCurrentSongDuratation : state => state.currentSongDuration,
-      getSongProgress : state => state.seek
+      getSongProgress : state => state.seek,
+      getAnimready : state => state.anim_ready,
+      getSongMode : state => state.song_mode,
+      getIndexLibrary: state => state.index_library,
+      getMusicLibrary: state => state.music_library
 }
 
 
@@ -506,6 +571,10 @@ const actions = {
       },
       toggleMute({commit}){
         commit(types.SET_MUTED)
+      },
+      loadFile({commit}, payload){
+        var file = payload.file
+        commit(types.LOAD_FILE, {file})
       },
       setTime({commit}, payload){
         var timeCue = payload.timecue
