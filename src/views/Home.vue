@@ -1,14 +1,42 @@
 <template>
-  <v-card full-width height="100%">
-    <v-card-title><h3><b>Music Visualizer 3000</b></h3></v-card-title>
-    <v-card-text>
-      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque laboriosam beatae maiores pariatur suscipit nihil molestiae corporis maxime error labore non, impedit qui, quo aliquam totam modi facilis saepe animi.</p>
-    </v-card-text>
+  <v-card height="100%" wdith="100%" style="overflow:hidden;">
+    <v-img
+          src="./logo.png"
+          aspect-ratio="2.75"
+    ></v-img>
+    <v-card-actions>
+      <v-layout row wrap align-center>
+        <v-flex xs12>
+          <div class="text-xs-center" style="width:100%">
+            <v-btn color="blue darken-1" dark large :loading="loading" to="/animation">
+              <v-icon>play_arrow</v-icon>
+              Start now 
+            </v-btn>
+            
+          </div>
+        </v-flex>
+      </v-layout>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { mapGetters} from 'vuex'
   export default {
+    data: () => ({
+    loading : true
+    }), 
+    computed: {
+     ...mapGetters({
+        loading_state : 'getAnimready'
+     })
+    },
+    watch: {
+      loading_state(newVal, oldVal){
+        this.loading = !newVal
+        console.log("anim rdy home" + newVal +  " " + this.loading)
+      }
+    }
 
   }
 </script>

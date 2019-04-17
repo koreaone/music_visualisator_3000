@@ -1,17 +1,35 @@
 <template>
   <v-card full-width height="100%">
-    <v-card-title><h3><b>About</b></h3></v-card-title>
-    <v-card-text>
-      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Neque laboriosam beatae maiores pariatur suscipit nihil molestiae corporis maxime error labore non, impedit qui, quo aliquam totam modi facilis saepe animi.</p>
-    </v-card-text>
+    <v-tabs v-model="tab" fixed-tabs>
+      <v-tab key="1">Description</v-tab>
+      <v-tab key="2">About us</v-tab>
+      <v-tab key="3">Contact</v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item key="1">
+        <Description></Description>
+      </v-tab-item>
+      <v-tab-item key="2">
+      hey
+      </v-tab-item>
+      <v-tab-item key="3">
+      hey
+      </v-tab-item>
+    </v-tabs-items>
   </v-card>
 </template>
 
 
 <script>
+import Description from "./description"
+
   export default {
+    components : {
+      Description
+    },
     data () {
       return {
+        tab: null
       }
     }
   }
