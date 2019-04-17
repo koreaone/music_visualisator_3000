@@ -11,6 +11,8 @@ const state = {
   drawerState : false,              
   p5Instance : null,                //Defines the object responsible for animation
   isInit : false,
+  snackbar_text : "",               //Message of the snackbar
+  isLoading : true,
   playstate: false,                 //Defines if player is in play mode  --UNUSED
   pausestate : false,               //Defines if player is in pause mode  -- UNUSED
   playicon : 'play_arrow',          //Icon of player 
@@ -21,14 +23,15 @@ const state = {
   currentSongDuration : 0,          //Duration of current song in seconds
   anim_choice : 'radial_lines',     //Name of current animation
   anim_ready :false,                //Set when animation is ready to be played
+  song_ready : false,               //Set when song is ready to be played
   song_mode : 0,                    //Defines song input -- Default is 0 -> from current library -- 1 -> is user input
   input_file : null,
   index_library : 0,
   music_library : [
-    {title:"Damso -  Macarena.mp3", filename: "Damso -  Macarena.mp3"},
-    {title:"Mome - Aloha", filename: "Mome - Aloha.mp3"},
-    {title: "Awolation - Sail", filename: "Awolation - Sail.mp3"},
-    {title: "Cage The Elephant - Come A Little Closer", filename: "Cage The Elephant - Come A Little Closer.mp3"} 
+    {id: 0, title:"Damso -  Macarena.mp3", filename: "Damso -  Macarena.mp3"},
+    {id: 1, title:"Mome - Aloha", filename: "Mome - Aloha.mp3"},
+    {id: 2, title: "Awolation - Sail", filename: "Awolation - Sail.mp3"},
+    {id: 3, title: "Cage The Elephant - Come A Little Closer", filename: "Cage The Elephant - Come A Little Closer.mp3"} 
   ]
 }
 
@@ -67,8 +70,9 @@ const mutations = {
     state.song_mode = 1;
     state.p5Instance.loadSong();
   },
-  [types.LOAD_LOCAL_FILE] (state, {index}){
-    state.index_library = index;
+  [types.LOAD_LOCAL_FILE] (state, {id}){
+    console.log("Index :", + id)
+    state.index_library = id;
     state.song_mode = 0;
     state.p5Instance.loadSong();
   },
@@ -91,34 +95,67 @@ const mutations = {
   },
   [types.INSTANCIATE_P5](state){
     var sketch = function (p) {
-      
+       //Global variables
+       let song;
+       var FFT, amplitude, peakDetector;
+       var height, width;
+       var levels = 0, spectrum = []
+       var DoAnimation = false;
+       var volume = 0.5;
+       let updateSeek;
+       
+       var binCount = 128;
       //Get the new height and width
       p.resetHeight = function(){
         width = document.getElementById("anim-holder").clientWidth;
         height = document.getElementById("anim-holder").clientHeight  - 70;
       }
 
-      p.loadSong = function(){
-        if(state.song_mode == 0){
-          song = p.loadSound('./' + state.music_library[state.index_library].filename);
-          console.log("Now loading "+ state.music_library[state.index_library].filename);
-        } else if (state.song_mode == 1){
-          song = p.loadSound(state.input_file);
-          console.log("Now load user file :" + state.input_file.name);
+      p.onStartLoad = function(){
+        console.log("Sound loaded")
+        p.setSongInfo()
+        state.seek = 0.1;
+        state.song_ready = true;
+        if(state.anim_ready){
+          p.launchAnim()
         }
+        state.snackbar_text = "Sound has loaded"
+      }
+
+      p.onErrorLoad = function(){
+        state.snackbar_text = "mamamia something wrong happened";
+      } 
+
+      p.loadSong = function(){
+        state.song_ready = false;
+        state.seek = 0;
+        if(song){
+          p.pauseMusic();
+        }
+        if(state.anim_ready){
+          p.stopAnim();
+        }
+        if(state.song_mode == 0){
+          song = p.loadSound('./' + state.music_library[state.index_library].filename, p.onStartLoad, p.onErrorLoad, null);
+          console.log("Now loading "+ state.music_library[state.index_library].filename);
+          state.snackbar_text = "Now loading "+ state.music_library[state.index_library].filename;
+        } else if (state.song_mode == 1){
+          song = p.loadSound(state.input_file, p.onStartLoad, p.onErrorLoad, null);
+          console.log("Now load user file :" + state.input_file.name);
+          state.snackbar_text = "Now loading "+ state.input_file.name;
+        }
+
       }
 
       p.preload = function(){
         console.log("P5 Preload")
-        song = p.loadSound('./Damso -  Macarena.mp3')
-        if(song.isLoaded()){
-          state.currentSongDuration = song.duration()
-        }
+        p.loadSong();
+        
       }
 
       //Start the animation
       p.launchAnim = function (){
-        console.log("in p5 : launch anim")
+        //console.log("Launching animation")
         p.resetHeight();
         p.resizeCanvas(width, height);
         DoAnimation = true;
@@ -187,9 +224,14 @@ const mutations = {
 
       p.jumpMusic = function (timeCue){
         console.log("P5 Jump song to " + timeCue);
-        p.stopAnim();
-        song.jump((song.duration() / 100) * timeCue);
-        p.launchAnim();
+        if(state.song_ready == true){
+          p.stopAnim();
+          song.jump((song.duration() / 100) * timeCue);
+          p.launchAnim();
+        } else {
+          console.log("jumpmusic : Audio file is not ready yet")
+        }
+        
       }
 
       p.setSongVolume = function(){
@@ -214,19 +256,6 @@ const mutations = {
         p.setSongVolume();
       }
 
-
-      //Global variables
-      let song;
-      var songReady = false;
-      var FFT, amplitude, peakDetector;
-      var height, width;
-      var levels = 0, spectrum = []
-      var DoAnimation = false;
-      var volume = 0.5;
-      let updateSeek;
-      
-      var binCount = 128;
-
       p.setSongInfo = function(){
         state.currentSongDuration = song.duration();
       }
@@ -238,7 +267,6 @@ const mutations = {
       p.setAngleRadiant = function(){
         p.angleMode(p.RADIANS);
       }
-
 
       p.setAnimationParameters = function(){
         switch(state.anim_choice){
@@ -257,16 +285,17 @@ const mutations = {
         p.frameRate(30);
         //If loaded on page /animation or not
         if(document.getElementById("anim-holder") != null){
-          //console.log("1")
           p.resetHeight();
           p.createCanvas(width, height);
         } else {
-          //console.log("2");
           p.createCanvas(200, 200);
           p.noLoop();
         }
-        
-        
+
+        if(song.isLoaded()){
+          state.currentSongDuration = song.duration()
+        }
+
         //Set song on pause
         song.stop();
         state.playstate = false;
@@ -314,14 +343,13 @@ const mutations = {
 
       //Animation line of frequencies with circles
       p.CircleFFT = function(){
-        p.noFill()
-        //p.map(levels, 0, 1, 3, 7)
+        p.noFill();
         p.strokeWeight(levels * 4);
         var levelScale = p.map(levels, 0, 1, 1, 10);
         for(var i = 0; i < spectrum.length; i+=2){
-          var red = (p.map(spectrum[i], 0, 256, 1, 255) + p.random(-50, 50)) % 255;
-          var green = (p.map(spectrum[i], 0, 256, 1, 255) + p.random(-50, 50)) % 255;
-          var blue = (p.map(spectrum[i], 0, 256, 1, 255) + p.random(-50, 50)) % 255;
+          var red = (p.map(spectrum[i], 0, 256, 1, 255) ) ;
+          var green = (p.map(spectrum[i], 0, 256, 1, 255) ) ;
+          var blue = (p.map(spectrum[i], 0, 256, 1, 255) ) ;
           p.stroke(red, green, blue);
           var x = p.map(i, 0, spectrum.length, 0, width);
           var r = p.map(spectrum[i], 0, binCount, 0, 400);
@@ -337,14 +365,12 @@ const mutations = {
       var count4 = 0;
       var count5 = 0;
       p.radialFFT_lines = function(){
-        //p.stroke(255);
-        //p.noStroke();
         p.noFill();
         p.translate(width / 2, height / 2);
-        p.radialFigure_lines(320, 0 + count1, '#4c00c7', 255);
-        p.radialFigure_lines(260, 60 - count2,  '#c70039', 220);
-        p.radialFigure_lines(200, 120 + count3, '#FF5733', 190);
-        p.radialFigure_lines(140, 180 - count4, '#00c760', 160);
+        p.radialFigure_lines(400, 0 + count1, '#4c00c7');
+        p.radialFigure_lines(300, 60 - count2,  '#c70039');
+        p.radialFigure_lines(200, 120 + count3, '#FF5733');
+        p.radialFigure_lines(100, 180 - count4, '#00c760');
         //p.radialFigure(80, 240 + count5, '#4c00c7');
         count1+=0.003;
         count2+=0.002;
@@ -420,16 +446,15 @@ const mutations = {
         }
       }
 
-      p.radialFigure_lines = function(maxRadius, offset, hexColor, grey){
+      p.radialFigure_lines = function(maxRadius, offset, hexColor){
         p.stroke(hexColor);
-        p.strokeWeight(levels * 3.5);
+        p.strokeWeight(levels * 3.5 + 1);
         p.beginShape();
         var minRadius = 0;
         for (var i = 0; i < spectrum.length-1; i+=2) {
           var angle = p.map(i, 0, spectrum.length, 0, 300 + p.sin(offset) * 7 );
           var amp = spectrum[i];
-          var r = p.map(amp, 0, binCount, minRadius + 50 * levels, maxRadius + 50 * levels);
-          //var r = p.map(amp, 0, 256, minRadius, maxRadius);
+          var r = p.map(amp, 0, 256, minRadius + 50 * levels, maxRadius + 50 * levels);
           var x = r * p.cos(angle + offset);
           var y = r * p.sin(angle + offset);
           p.vertex(x, y);
@@ -528,6 +553,7 @@ const getters = {
       GetDrawerstate : state => state.drawerState,
       Getp5Instance : state => state.p5Instance,
       IsInit : state => state.isInit,
+      getSnackbarText: state => state.snackbar_text,
       getPlaystate : state => state.playstate,
       getPausestate : state => state.pausestate,
       getPlayicon : state => state.playicon,
@@ -536,6 +562,7 @@ const getters = {
       getCurrentSongDuratation : state => state.currentSongDuration,
       getSongProgress : state => state.seek,
       getAnimready : state => state.anim_ready,
+      getSongready : state => state.song_ready,
       getSongMode : state => state.song_mode,
       getIndexLibrary: state => state.index_library,
       getMusicLibrary: state => state.music_library
@@ -576,6 +603,10 @@ const actions = {
         var file = payload.file
         commit(types.LOAD_FILE, {file})
       },
+      loadFromLibrary({commit}, payload){
+        var id = payload.id
+        commit(types.LOAD_LOCAL_FILE, {id})
+      },
       setTime({commit}, payload){
         var timeCue = payload.timecue
         commit(types.SET_TIME_SONG, {timeCue})
@@ -583,6 +614,9 @@ const actions = {
       setAnim({commit}, payload){
         var option_1 = payload.option_1
         commit(types.SET_ANIM, {option_1})
+      },
+      setSnackbar({state}, payload){
+        state.snackbar_text = payload.text;
       },
 
 

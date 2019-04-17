@@ -58,7 +58,7 @@ import { mapGetters, mapActions } from 'vuex'
     },
     beforeDestroy: function(){
       console.log("Animation component destory");
-      //this.stopAnimation();
+      this.stopAnimation();
 
     }
 }
