@@ -1,5 +1,5 @@
 <template>
-  <v-footer fixed height="70px" class="pa-3 grey darken-3 white--text">
+  <v-footer app fixed height="70px" class="pa-3 grey darken-3 white--text">
     <v-layout row justify-center>
       <v-dialog v-model="dialog" scrollable max-width="300px">
         <template v-slot:activator="{ on }">
@@ -198,7 +198,8 @@ export default {
     },
     checkfile: function(){
       this.librarysong_selected = -1;
-      if(this.file.type == 'audio/mpeg'){
+      console.log(this.file.type)
+      if(this.file.type == 'audio/mpeg' || this.file.type == 'audio/mp3' || this.file.type == 'audio/wav'){
         this.checkFile_ok = true;
         this.loadFile_ok = true;
       } else {

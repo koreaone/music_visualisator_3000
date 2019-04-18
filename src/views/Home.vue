@@ -33,9 +33,12 @@ import { mapGetters} from 'vuex'
     },
     watch: {
       loading_state(newVal, oldVal){
-        this.loading = !newVal
-        console.log("anim rdy home" + newVal +  " " + this.loading)
+        this.loading = !newVal;
       }
+    },
+    mounted: function () {
+
+      this.loading = !this.loading_state;
     }
 
   }

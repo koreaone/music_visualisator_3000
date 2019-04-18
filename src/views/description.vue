@@ -1,6 +1,6 @@
 <template>
     <v-card flat width="100%" height="100%" style="text-align:justify">
-        <v-card-title>
+        <v-card-title class="ml-4">
             <h1><b>The Music Visualisator 3000</b></h1>
         </v-card-title >
         <v-card-text style="font-size:18pt">
@@ -14,7 +14,7 @@
             </blockquote>
         </v-card-text>
         <v-card-text style="text-align: center; color:rgba(0,0,0,0.87);">__________________________________________</v-card-text>
-        <v-card-title>
+        <v-card-title class="ml-4">
             <h1><b>Our Motivations</b></h1>
         </v-card-title >
         <v-card-text style="font-size:18pt">
@@ -25,7 +25,7 @@
             </blockquote>
         </v-card-text>
         <v-card-text style="text-align: center; color:rgba(0,0,0,0.87);">__________________________________________</v-card-text>
-        <v-card-title>
+        <v-card-title class="ml-4">
             <h1><b>Inspirations</b></h1>
         </v-card-title >
         <v-card-text style="font-size:18pt">

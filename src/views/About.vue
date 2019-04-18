@@ -10,10 +10,10 @@
         <Description></Description>
       </v-tab-item>
       <v-tab-item key="2">
-      hey
+      work in progress
       </v-tab-item>
       <v-tab-item key="3">
-      hey
+      work in progress 
       </v-tab-item>
     </v-tabs-items>
   </v-card>
