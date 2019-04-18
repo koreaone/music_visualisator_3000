@@ -10,10 +10,10 @@
         <Description></Description>
       </v-tab-item>
       <v-tab-item key="2">
-      work in progress
+        <Aboutus></Aboutus>
       </v-tab-item>
       <v-tab-item key="3">
-      work in progress 
+        <Contact></Contact>
       </v-tab-item>
     </v-tabs-items>
   </v-card>
@@ -21,11 +21,13 @@
 
 
 <script>
-import Description from "./description"
+import Description from "./Description"
+import Aboutus from "./Aboutus"
+import Contact from "./Contact"
 
   export default {
     components : {
-      Description
+      Description, Aboutus, Contact
     },
     data () {
       return {

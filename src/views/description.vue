@@ -35,9 +35,7 @@
                  To list a few of remarkables concepts 
             </blockquote>
             <v-list>
-                <v-list-item>
-                    omama
-                </v-list-item>
+                
             </v-list>
         </v-card-text>
           

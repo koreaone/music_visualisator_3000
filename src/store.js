@@ -27,6 +27,7 @@ const state = {
   song_mode : 0,                    //Defines song input -- Default is 0 -> from current library -- 1 -> is user input
   input_file : null,
   index_library : 0,
+  music_library_path : './library/',
   music_library : [
     {id: 0, title:"Damso -  Macarena.mp3", filename: "Damso -  Macarena.mp3"},
     {id: 1, title:"Mome - Aloha", filename: "Mome - Aloha.mp3"},
@@ -136,7 +137,7 @@ const mutations = {
           p.stopAnim();
         }
         if(state.song_mode == 0){
-          song = p.loadSound('./' + state.music_library[state.index_library].filename, p.onStartLoad, p.onErrorLoad, null);
+          song = p.loadSound(state.music_library_path + state.music_library[state.index_library].filename, p.onStartLoad, p.onErrorLoad, null);
           console.log("Now loading "+ state.music_library[state.index_library].filename);
           state.snackbar_text = "Now loading "+ state.music_library[state.index_library].filename;
         } else if (state.song_mode == 1){
