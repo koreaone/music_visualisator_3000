@@ -1,12 +1,33 @@
 <template>
   <v-footer app fixed height="70px" class="pa-3 grey darken-3 white--text">
+    <v-btn icon dark  @click="dialog = true" class="white--text" id='opendrawbtn'>
+        <v-icon>menu</v-icon>
+    </v-btn>
+    <v-btn icon dark @click="dialog2 = true" class="white--text" id='fileinputbtn'>
+      <v-icon>get_app</v-icon> 
+    </v-btn>
+    <v-btn icon @click.native="SongControl()" :disabled="!songready" class="white--text" id='playbtn'>
+      <v-icon>{{ playicon }}</v-icon>
+    </v-btn>
+    <v-spacer></v-spacer>
+    <div class="progress_bar_div">
+      <v-layout row justify-center align-center fill-height>
+        <v-flex xs9>
+          <v-progress-linear id="progress_bar" :indeterminate="!songready" v-model="trackProgress"  @click="setTimeSong($event)"></v-progress-linear>
+        </v-flex>
+        <v-flex xs3>
+          <div class="ml-3" style="margin-block: auto;">{{ formatTime(seek) }} / {{formatedDuration}}</div> 
+        </v-flex>
+      </v-layout>      
+    </div>
+    <v-spacer></v-spacer>
+    <v-btn icon @click.native="muteVolume()" class="white--text mr-2" id='volumebtn'>
+      <v-icon >{{ volumeIcon }}</v-icon>
+    </v-btn>
+    <v-slider class="volumeBar" v-model="volumeFooter" @change="setVolumeFooter()" min="0" max="10" step="1" width="100"></v-slider>
+    
     <v-layout row justify-center>
       <v-dialog v-model="dialog" scrollable max-width="300px">
-        <template v-slot:activator="{ on }">
-          <v-btn icon dark v-on="on" class="white--text mx-4" id='opendrawbtn'>
-            <v-icon>menu</v-icon>
-          </v-btn>
-        </template>
         <v-card>
           <v-card-title><b>Select animation</b></v-card-title>
           <v-divider></v-divider>
@@ -30,11 +51,6 @@
     </v-layout>
     <v-layout row justify-center>
       <v-dialog v-model="dialog2" max-width="600px">
-        <template v-slot:activator="{ on }">
-          <v-btn icon dark v-on="on" class="white--text mx-4" id='fileinputbtn'>
-            <v-icon>get_app</v-icon> 
-          </v-btn>
-        </template>
         <v-card>
           <v-card-title><b>Choose your own file !</b></v-card-title>
           <v-card-actions>
@@ -63,21 +79,6 @@
         </v-card>
       </v-dialog>
     </v-layout>
-    <v-btn icon @click.native="SongControl()" :disabled="!songready" class="white--text" id='playbtn'>
-      <v-icon>{{ playicon }}</v-icon>
-    </v-btn>
-    <v-spacer></v-spacer>
-    <div class="progress_bar_div">
-      <div style="width:85%">
-        <v-progress-linear id="progress_bar" :indeterminate="!songready" v-model="trackProgress"  @click="setTimeSong($event)"></v-progress-linear>
-      </div>
-      <div class="ml-3" style="margin-block: auto;">{{ formatTime(seek) }} / {{formatedDuration}}</div> 
-    </div>
-    <v-spacer></v-spacer>
-    <v-btn icon @click.native="muteVolume()" class="white--text mr-2" id='volumebtn'>
-      <v-icon >{{ volumeIcon }}</v-icon>
-    </v-btn>
-    <v-slider class="volumeBar" v-model="volumeFooter" @change="setVolumeFooter()" min="0" max="10" step="1" width="100"></v-slider>
   </v-footer>
 </template>
 

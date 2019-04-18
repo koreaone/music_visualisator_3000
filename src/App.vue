@@ -7,7 +7,7 @@
       <router-view></router-view>
     </v-content>
     <Snackbar/>
-    <Footer app></Footer>
+    <Footer></Footer>
   </v-app>
 </template>
 

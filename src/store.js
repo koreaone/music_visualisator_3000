@@ -108,7 +108,7 @@ const mutations = {
       //Get the new height and width
       p.resetHeight = function(){
         width = document.getElementById("anim-holder").clientWidth;
-        height = document.getElementById("anim-holder").clientHeight  - 70;
+        height = document.getElementById("anim-holder").clientHeight;
       }
 
       p.onStartLoad = function(){
