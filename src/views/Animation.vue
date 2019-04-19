@@ -1,7 +1,7 @@
 <template>
     <div style="height:100%; width:100%">
       <div  id="anim-holder" ref="anim-holder" style="height:100%;width:100%;top:0;backgroud:red"> 
-        <div id='anime' ></div>
+        <div id='anime'></div>
       </div>
       <!-- <div  class="text-xs-center">
         <v-progress-circular indeterminate color="red" :size="70" :width="7"></v-progress-circular>

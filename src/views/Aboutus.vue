@@ -4,7 +4,7 @@
             <h1><b>Who are we</b></h1>
         </v-card-title >
         <v-card-title>
-            SO YOU WANNA KNOW ABOUT US
+            This website has been created by a group of student
         </v-card-title>
           
     </v-card>
@@ -15,7 +15,7 @@
 export default {
     data (){
         return {
-            paragraph1 : null
+           
         }
     }
 }

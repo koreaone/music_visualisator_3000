@@ -1,18 +1,13 @@
 <template>
   <v-card height="100%" wdith="100%" style="overflow:hidden;">
-    <v-img
-          src="./logo.png"
-          aspect-ratio="2.75"
-    ></v-img>
+    <v-img src="./logo.png" aspect-ratio="2.75"></v-img>
     <v-card-actions>
       <v-layout row wrap align-center>
         <v-flex xs12>
           <div class="text-xs-center" style="width:100%">
             <v-btn color="blue darken-1" dark large :loading="loading" to="/animation">
-              <v-icon>play_arrow</v-icon>
-              Start now 
+              <v-icon>play_arrow</v-icon> Start now 
             </v-btn>
-            
           </div>
         </v-flex>
       </v-layout>

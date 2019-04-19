@@ -2,7 +2,7 @@
   <v-card full-width height="100%">
     <v-tabs v-model="tab" fixed-tabs>
       <v-tab key="1">Description</v-tab>
-      <v-tab key="2">About us</v-tab>
+      <v-tab key="2">Moreover</v-tab>
       <v-tab key="3">Contact</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
