@@ -168,6 +168,7 @@ export default {
       this.toggleSong();
     },
     PlayNext: function(){
+      console.log("Play next")
       this.playNext();
     },
     SetRandomMode: function(){

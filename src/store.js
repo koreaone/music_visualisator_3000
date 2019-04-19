@@ -159,6 +159,11 @@ const mutations = {
         state.snackbar_text = "mamamia something wrong happened";
       } 
 
+      p.songIsOver = function(){
+        //p.playNext();
+        console.log("song is over")
+      }
+
       p.loadSong = function(){
         state.song_ready = false;
         state.seek = 0;
@@ -180,6 +185,7 @@ const mutations = {
           console.log("Now load user file :" + state.input_file.name);
           state.snackbar_text = "Now loading "+ state.input_file.name;
         }
+        //song.onended(p.songIsOver());
       }
 
       p.preload = function(){

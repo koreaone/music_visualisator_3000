@@ -5,7 +5,7 @@
       <v-layout row wrap align-center justify-center>
         <v-flex xs12 sm6>
           <div class="text-xs-center" style="width:100%">
-            <v-btn color="blue darken-1" dark large :loading="loading" to="/animation">
+            <v-btn color="blue darken-1" dark large :loading="loading"  @click.native="toggleSong" to="/animation">
               <v-icon class="mr-2">play_arrow</v-icon> Start now 
             </v-btn>
           </div>
@@ -48,13 +48,15 @@
 </template>
 
 <script>
-import { mapGetters} from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+
   export default {
     data: () => ({
     loading : true,
     updates : [
-      {id: 1, date:"19 April 2019", version: "1.01", title: "Minor fixes !", description: "Fixes of visuals glitches and bug on Google Chrome Browser regarding file input !"},
-      {id: 0, date:"16 April 2019", version: "1.00", title:"Website launch !", description : "Version 1 is out, Music Visualisator is now out online ! Please, enjoy our application and don't hestitate to give us some feedbacks"},
+      {id: 2, date:"20 April 2019", version: "1.1.0", title: "Adding Content", description: "Adding songs, new buttons aswell as new tabs in the About section! You can now contact us through our form ! Fixes minor bugs too."},
+      {id: 1, date:"19 April 2019", version: "1.0.1", title: "Minor fixes !", description: "Fixes of visuals glitches and bug on Google Chrome Browser regarding file input !"},
+      {id: 0, date:"16 April 2019", version: "1.0.0", title:"Website launch !", description : "Version 1 is out, Music Visualisator is now out online ! Please, enjoy our application and don't hestitate to give us some feedbacks"},
 
     ],
     roadmap:["Mic support", "More animations", "Account support", "Proper mobile support"]
@@ -63,6 +65,11 @@ import { mapGetters} from 'vuex'
      ...mapGetters({
         loading_state : 'getAnimready'
      })
+    },
+    methods : {
+      ...mapActions([
+   	 		'toggleSong'
+         ]),
     },
     watch: {
       loading_state(newVal, oldVal){
