@@ -1,5 +1,5 @@
 <template>
-    <v-snackbar v-model="snackbar" top left>
+    <v-snackbar v-model="snackbar" top left color="white black--text">
       {{ text }}
       <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
     </v-snackbar>

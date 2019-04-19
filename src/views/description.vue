@@ -32,7 +32,20 @@
             <blockquote class="blockquote">
                  This web-application has been inspired by many sources. From youtube videos with amazing creation to already existing applications such as <i>Music Visualisator 3000</i>.
                  <br><br>
-                 To list a few of remarkables concepts 
+                 To list a few of remarkables concepts :
+                 <v-list three-line>
+                    <v-list-tile v-for="item in sources" :key="item.id">
+                    <v-list-tile-content>
+                        <v-list-tile-title>
+                            <b> {{ item.name }} &middot;</b> <i> {{ item.type }}</i>
+                        </v-list-tile-title>
+                        <v-list-tile-sub-title>
+                            <a :href="item.link">{{item.link}}</a>
+                        </v-list-tile-sub-title>
+                    </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+                 
             </blockquote>
             <v-list>
                 
@@ -47,7 +60,16 @@
 export default {
     data (){
         return {
-            paragraph1 : null
+            sources: [
+                {id:0, name: "Do adive in Music",  type: "Web-application", link:"https://do.adive.in/music/501"},
+                {id:1, name: "Butter Churn viz", type: "Web-application",  link: "https://butterchurnviz.com/"},
+                {id:2, name: "Synesthesia", type: "Software",  link: "https://www.synesthesia.live/"},
+                {id:3, name: "Videobolt", type: "Software",  link: "https://www.synesthesia.live/"},
+                {id:4, name: "Shed - The Bot", type: "Video",  link: "https://vimeo.com/56268440"},
+                {id:5, name: "Phýllon - Music Visualization", type: "Video",  link: "http://www.vsxu.com/"},
+                {id:6, name: "Proximity's videos", type: "Video",  link: "https://www.youtube.com/user/PandoraMuslc"},
+                {id:7, name: "Therewasaguy github's page ", type: "Website",  link: "https://therewasaguy.github.io/p5-music-viz/"},
+            ],
         }
     }
 }

@@ -1,13 +1,23 @@
 import Vue from 'vue'
+import firebase from 'firebase'
 import Vuex from 'vuex'
 import P5 from 'p5'
 import 'p5/lib/addons/p5.sound';
 import * as types from './mutation-types'
 
 Vue.use(Vuex)
-
+var config = {
+  apiKey: "AIzaSyCImUoNC_TUE7OwlkS99NXDfmBh-u-ItE8",
+  authDomain: "music-visualisator-3000.firebaseapp.com",
+  databaseURL: "https://music-visualisator-3000.firebaseio.com",
+  projectId: "music-visualisator-3000",
+  storageBucket: "music-visualisator-3000.appspot.com",
+  messagingSenderId: "337144084635"
+};
+firebase.initializeApp(config);
 
 const state = {
+  contact_sent : false,
   drawerState : false,              
   p5Instance : null,                //Defines the object responsible for animation
   isInit : false,
@@ -25,17 +35,32 @@ const state = {
   anim_ready :false,                //Set when animation is ready to be played
   song_ready : false,               //Set when song is ready to be played
   song_mode : 0,                    //Defines song input -- Default is 0 -> from current library -- 1 -> is user input
+  wasOnPlay: false,                 //True if when loading song it was playing
+  randomPlay : false,               //Defines if play next will do the next or randomly choose a new song
   input_file : null,
   index_library : 0,
   music_library_path : './library/',
   music_library : [
-    {id: 0, title:"Damso -  Macarena.mp3", filename: "Damso -  Macarena.mp3"},
+    {id: 0, title:"Childish Gambino - Sweatpants ft. Problem", filename: "Childish Gambino - Sweatpants ft. Problem.mp3"},
     {id: 1, title:"Mome - Aloha", filename: "Mome - Aloha.mp3"},
     {id: 2, title: "Awolation - Sail", filename: "Awolation - Sail.mp3"},
-    {id: 3, title: "Cage The Elephant - Come A Little Closer", filename: "Cage The Elephant - Come A Little Closer.mp3"} 
+    {id: 3, title: "Cage The Elephant - Come A Little Closer", filename: "Cage The Elephant - Come A Little Closer.mp3"},
+    {id: 4, title: "Drake - Back to Back", filename: "Drake - Back to Back.mp3"}, 
+    {id: 5, title: "Hemaera - Pure Happiness 2", filename: "Hemaera - Pure Happiness 2.wav"}, 
+    {id: 6, title: "The Kooks - Naive", filename: "The Kooks - Naive.mp3"}, 
+    {id: 7, title: "The Blaze - Virile", filename: "The Blaze - Virile.mp3"},
+    {id: 8, title: "The XX - Intro", filename: "The XX - Intro.mp3"},
+    {id: 9, title: "Two Feet - Love Is A Bitch", filename: "Two Feet - Love Is A Bitch.mp3"},
+    {id: 10, title: "Hans Zimmer - Interstellar", filename: "Hans Zimmer - Interstellar.mp3"},
+    {id: 11, title: "PLK - Pas les mêmes", filename: "PLK - Pas les mêmes.mp3"},
+    {id: 12, title: "Yellow Claw - No Class (Jordi Rivera Remix)", filename: "Yellow Claw - No Class (Jordi Rivera Remix).mp3"},
+    {id: 13, title: "AREA21 - Spaceships", filename: "AREA21 - Spaceships.mp3"},
+    {id: 14, title: "Lil Peep - Star Shopping", filename: "Lil Peep - Star Shopping.mp3"},
+    {id: 15, title: "Mac DeMarco - My Kind Of Woman", filename: "Mac DeMarco - My Kind Of Woman.mp3"},
+    
   ]
 }
-
+//{id: , title: "", filename: ""},
 const mutations = {
   [types.TOGGLE_DRAWER] (state){
     console.log("Mutation TOGGLE_DRAWER")
@@ -44,6 +69,10 @@ const mutations = {
   [types.TOGGLE_SONG] (state){
     console.log("Mutation TOGGLE_SONG")
     state.p5Instance.toggleSong();
+  },
+  [types.PLAY_NEXT] (state){
+    console.log("Mutation TOGGLE_SONG")
+    state.p5Instance.playNext();
   },
   [types.LAUNCH_ANIMATION] (state){
     console.log("Mutation LAUNCH_ANIMATION")
@@ -118,7 +147,10 @@ const mutations = {
         state.seek = 0.1;
         state.song_ready = true;
         if(state.anim_ready){
-          p.launchAnim()
+          p.launchAnim();
+        }
+        if(state.wasOnPlay){
+          p.playMusic();
         }
         state.snackbar_text = "Sound has loaded"
       }
@@ -130,8 +162,11 @@ const mutations = {
       p.loadSong = function(){
         state.song_ready = false;
         state.seek = 0;
-        if(song){
+        if(song && song.isPlaying()){
           p.pauseMusic();
+          state.wasOnPlay = true;
+        } else {
+          state.wasOnPlay = false;
         }
         if(state.anim_ready){
           p.stopAnim();
@@ -145,7 +180,6 @@ const mutations = {
           console.log("Now load user file :" + state.input_file.name);
           state.snackbar_text = "Now loading "+ state.input_file.name;
         }
-
       }
 
       p.preload = function(){
@@ -193,6 +227,26 @@ const mutations = {
         } else {
           p.playMusic();
         }
+      }
+
+      p.playNext = function(){
+        state.song_mode = 0;
+        if(state.randomPlay){
+          let rdm = generateRandom(0, state.music_library.length-1);
+          state.index_library = rdm;
+        } else {
+          let max = state.music_library.length-1;
+          if(state.index_library == max){
+            state.index_library = 0;
+          } else {
+            state.index_library += 1;
+          }
+        }
+        p.loadSong();
+        if(!state.wasOnPlay){
+          p.playMusic();
+        }
+          
       }
 
       //Play music
@@ -346,7 +400,7 @@ const mutations = {
       p.CircleFFT = function(){
         p.noFill();
         p.strokeWeight(levels * 4);
-        var levelScale = p.map(levels, 0, 1, 1, 10);
+        //var levelScale = p.map(levels, 0, 1, 1, 10);
         for(var i = 0; i < spectrum.length; i+=2){
           var red = (p.map(spectrum[i], 0, 256, 1, 255) ) ;
           var green = (p.map(spectrum[i], 0, 256, 1, 255) ) ;
@@ -566,7 +620,8 @@ const getters = {
       getSongready : state => state.song_ready,
       getSongMode : state => state.song_mode,
       getIndexLibrary: state => state.index_library,
-      getMusicLibrary: state => state.music_library
+      getMusicLibrary: state => state.music_library,
+      getRandomState: state => state.randomPlay
 }
 
 
@@ -579,19 +634,22 @@ const actions = {
         }
         
       },
-      startAnimation({commit, state}){
+      startAnimation({commit}){
         console.log("action triggered - launch anim");
         commit(types.LAUNCH_ANIMATION)
       },
-      stopAnimation({commit, state}){
+      stopAnimation({commit}){
         console.log("action triggered - stop anim");
         commit(types.STOP_ANIMATION)
       },
-      toggleDrawer({commit, state}){
+      toggleDrawer({commit}){
         commit(types.TOGGLE_DRAWER)
       },
-      toggleSong({commit, state}){
+      toggleSong({commit}){
         commit(types.TOGGLE_SONG)
+      },
+      playNext({commit}){
+        commit(types.PLAY_NEXT)
       },
       setVolume({commit}, payload){
         var newvol = payload.vol;
@@ -619,8 +677,50 @@ const actions = {
       setSnackbar({state}, payload){
         state.snackbar_text = payload.text;
       },
+      setRandom({state}){
+        state.randomPlay = !state.randomPlay;
+      },
+      sendMessage({state}, payload){
+        console.log("1");
+        if(state.contact_sent){
+          state.snackbar_text = "Only one message is allowed per session"
+        }
+       var promise = Vue.http.get('http://cors-anywhere.herokuapp.com/http://api.ipstack.com/115.91.214.2?access_key=518e4a70542dacfe3f6f00d6d9770946'
+        ).then(function ({data}) {
+            var userinfo = {};
+            userinfo.ip = data.ip;
+            userinfo.city = data.city;
+            userinfo.country_name = data.country_name;
 
+            let now = new Date();
+            userinfo.time = "" + now.getDay() + "/" + now.getMonth() + "/" + now.getFullYear() + " - " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+            //state.userinfo = userinfo;
+            
+            var messagesRef = firebase.database().ref('messages');
+            var newMessageRef = messagesRef.push();
+            newMessageRef.set({
+                name: payload.name,
+                email: payload.email,
+                object: payload.object,
+                message: payload.message,
+                ip: userinfo.ip,
+                city: userinfo.city,
+                country: userinfo.country_name,
+                time: userinfo.time
+            });
+            state.snackbar_text = "Message has been sent ! Thanks"
+        })
+        
+      },
+      countVisitor(){
 
+      },
+      
+}
+
+function generateRandom(min, max) {
+  var num = Math.floor(Math.random() * (max - min + 1)) + min;
+  return (num === playingindex) ? generateRandom(min, max) : num;
 }
 
 export default new Vuex.Store({

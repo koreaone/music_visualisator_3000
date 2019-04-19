@@ -9,6 +9,9 @@
     <v-btn icon @click.native="SongControl()" :disabled="!songready" class="white--text" id='playbtn'>
       <v-icon>{{ playicon }}</v-icon>
     </v-btn>
+    <v-btn icon @click.native="PlayNext()" class="white--text" id='nextbtn'>
+      <v-icon>skip_next</v-icon>
+    </v-btn>
     <v-spacer></v-spacer>
     <div class="progress_bar_div">
       <v-layout row justify-center align-center fill-height>
@@ -20,7 +23,9 @@
         </v-flex>
       </v-layout>      
     </div>
-    <v-spacer></v-spacer>
+    <v-btn icon @click.native="SetRandomMode()" :class="{'blue--text': isRandom, 'white--text': !isRandom}" id='playbtn'>
+      <v-icon>shuffle</v-icon>
+    </v-btn>
     <v-btn icon @click.native="muteVolume()" class="white--text mr-2" id='volumebtn'>
       <v-icon >{{ volumeIcon }}</v-icon>
     </v-btn>
@@ -50,7 +55,7 @@
       </v-dialog>
     </v-layout>
     <v-layout row justify-center>
-      <v-dialog v-model="dialog2" max-width="600px">
+      <v-dialog v-model="dialog2" fullscreen >
         <v-card>
           <v-card-title><b>Choose your own file !</b></v-card-title>
           <v-card-actions>
@@ -58,7 +63,7 @@
           </v-card-actions>
           <v-divider></v-divider>
           
-          <v-card flat tile height="300px" width="100%">
+          <v-card flat tile width="100%">
             <v-card-title>Choose from our library ! </v-card-title>
             <v-list>
               <v-list-tile v-for="item in musiclibrary" :key="item.id" @click="SetNewChoice(item.id)">
@@ -115,7 +120,8 @@ export default {
         songmode : 'getSongMode',
         indexlibrary: 'getIndexLibrary',
         musiclibrary : 'getMusicLibrary',
-        songready : 'getSongready'
+        songready : 'getSongready',
+        isRandom : 'getRandomState',
      }),
      volumeIcon(){
        if(this.volumeFooter > 5){
@@ -156,10 +162,16 @@ export default {
   },
   methods : {
     ...mapActions([
-   	 		'toggleDrawer','toggleSong','toggleMute' ,'setVolume', 'setTime', 'setAnim', 'loadFile','loadFromLibrary','setSnackbar'
+   	 		'toggleDrawer','toggleSong','toggleMute' ,'setVolume', 'setTime', 'setAnim', 'loadFile','loadFromLibrary','setSnackbar', 'playNext', 'setRandom'
          ]),
     SongControl: function(){
       this.toggleSong();
+    },
+    PlayNext: function(){
+      this.playNext();
+    },
+    SetRandomMode: function(){
+      this.setRandom();
     },
     setVolumeFooter: function(){
       var payload = {vol : this.volumeFooter }
