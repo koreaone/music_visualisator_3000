@@ -1,7 +1,7 @@
 <template>
   <v-toolbar id="toolbar" color="grey darken-3" app fixed clipped-left>                   
     <v-toolbar-title class="white--text">
-    <v-btn flat to="/" class="white--text" active-class>
+    <v-btn flat to="/" class="white--text" active-class style="font-size: 20px;">
          Music Visualisator 3000  
     </v-btn>                                       
     </v-toolbar-title>                             
@@ -35,18 +35,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+#toolbar{
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
 }
 </style>

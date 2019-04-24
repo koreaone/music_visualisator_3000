@@ -28,7 +28,7 @@ export default {
                 age:"21", 
                 description:"I'm the primary developper on this project. I'm a french student from the IT enginner school EPITA !",
                },
-               {name: "Aida C.", 
+               {name: "Aida Z.", 
                 age:"20", 
                 description:"I'm an IT student from Sejong University in Seoul, South Korea !"
                },

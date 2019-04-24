@@ -687,19 +687,11 @@ const actions = {
         state.randomPlay = !state.randomPlay;
       },
       sendMessage({state}, payload){
-        console.log("1");
         if(state.contact_sent){
           state.snackbar_text = "Only one message is allowed per session"
         }
-       var promise = Vue.http.get('http://cors-anywhere.herokuapp.com/http://api.ipstack.com/115.91.214.2?access_key=518e4a70542dacfe3f6f00d6d9770946'
-        ).then(function ({data}) {
-            var userinfo = {};
-            userinfo.ip = data.ip;
-            userinfo.city = data.city;
-            userinfo.country_name = data.country_name;
-
-            let now = new Date();
-            userinfo.time = "" + now.getDay() + "/" + now.getMonth() + "/" + now.getFullYear() + " - " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+        let now = new Date();
+            let time = "" + now.getDay() + "/" + now.getMonth() + "/" + now.getFullYear() + " - " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
             //state.userinfo = userinfo;
             
             var messagesRef = firebase.database().ref('messages');
@@ -709,13 +701,18 @@ const actions = {
                 email: payload.email,
                 object: payload.object,
                 message: payload.message,
-                ip: userinfo.ip,
-                city: userinfo.city,
-                country: userinfo.country_name,
-                time: userinfo.time
+                time: time
             });
             state.snackbar_text = "Message has been sent ! Thanks"
-        })
+      //  var promise = Vue.http.get('http://cors-anywhere.herokuapp.com/http://api.ipstack.com/115.91.214.2?access_key=518e4a70542dacfe3f6f00d6d9770946'
+      //   ).then(function ({data}) {
+      //       var userinfo = {};
+      //       userinfo.ip = data.ip;
+      //       userinfo.city = data.city;
+      //       userinfo.country_name = data.country_name;
+
+            
+      //   })
         
       },
       countVisitor(){

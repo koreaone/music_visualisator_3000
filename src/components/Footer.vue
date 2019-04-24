@@ -1,10 +1,10 @@
 <template>
   <v-footer app fixed height="70px" class="pa-3 grey darken-3 white--text">
     <v-btn icon dark  @click="dialog = true" class="white--text" id='opendrawbtn'>
-        <v-icon>menu</v-icon>
+        <v-icon>tune</v-icon>
     </v-btn>
     <v-btn icon dark @click="dialog2 = true" class="white--text" id='fileinputbtn'>
-      <v-icon>get_app</v-icon> 
+      <v-icon>library_music</v-icon> 
     </v-btn>
     <v-btn icon @click.native="SongControl()" :disabled="!songready" class="white--text" id='playbtn'>
       <v-icon>{{ playicon }}</v-icon>
@@ -55,17 +55,17 @@
       </v-dialog>
     </v-layout>
     <v-layout row justify-center>
-      <v-dialog v-model="dialog2" fullscreen >
+      <v-dialog v-model="dialog2" width="600">
         <v-card>
           <v-card-title><b>Choose your own file !</b></v-card-title>
           <v-card-actions>
-            <fileinput v-model="file" @input="checkfile"></fileinput>
+            <fileinput v-model="file" @input="checkfile" class="px-3"></fileinput>
           </v-card-actions>
           <v-divider></v-divider>
           
           <v-card flat tile width="100%">
-            <v-card-title>Choose from our library ! </v-card-title>
-            <v-list>
+            <v-card-title><b>Choose from our library !</b></v-card-title>
+            <!-- <v-list>
               <v-list-tile v-for="item in musiclibrary" :key="item.id" @click="SetNewChoice(item.id)">
                 <v-list-tile-action>
                   <v-icon :class="{'pink--text': item.id == librarysong_selected, 'white--text': item.id != librarysong_selected}">music_note</v-icon>
@@ -74,7 +74,8 @@
                   <v-list-tile-title v-text="item.title"></v-list-tile-title>
                 </v-list-tile-content>
               </v-list-tile>
-            </v-list>
+            </v-list> -->
+            <v-select v-model="librarysong_selected" :items="musiclibrary" label="Pick a song !" outline class="px-4"  item-value="id" item-text="title" :change="SetNewChoice()"></v-select>
           </v-card>
           <v-divider></v-divider>
           <v-card-actions>
@@ -106,8 +107,7 @@ export default {
     file: null,
     checkFile_ok : false,
     loadFile_ok : false,
-    librarysong_selected : 0,
-    library_new_choice : false
+    librarysong_selected : 0
   }),
   computed: {
      ...mapGetters({
@@ -140,15 +140,7 @@ export default {
     }, 
     formatedDuration(){
       return this.formatTime(this.duration)
-    },
-    librarysong_selected_c(){
-      if(this.songmode == 0 && !this.library_new_choice){
-        this.librarysong_selected = this.indexlibrary;
-      } else {
-        console.log("New choice is being made");
-      }
     }
-
   }, 
   watch: {
     volume(newCount, oldCount){
@@ -216,6 +208,8 @@ export default {
       if(this.file.type == 'audio/mpeg' || this.file.type == 'audio/mp3' || this.file.type == 'audio/wav'){
         this.checkFile_ok = true;
         this.loadFile_ok = true;
+        console.log("File :");
+        console.log(this.file);
       } else {
         this.setSnackbar({text :"File must be an audio file"});
         this.file = null;
@@ -228,22 +222,20 @@ export default {
       this.dialog2 = false;
       this.librarysong_selected = this.indexlibrary;
     },
-    SetNewChoice(id){
-      if(id == this.indexlibrary){
-        console.log("song already loaded");
-        return;
+    SetNewChoice(){
+      if(this.librarysong_selected != -1){
+        this.file = null;
+        this.checkFile_ok = false;
+        this.loadFile_ok = true;
       }
-      this.librarysong_selected = id;
-      this.file = null;
-      this.checkFile_ok = false;
-      this.loadFile_ok = true;
+      
     },
     loadfile: function(){
       if(this.checkFile_ok){
         var payload = {file: this.file}
         this.loadFile(payload);
-      } else if (this.library_new_choice != -1){
-        console.log("Loading new song from library :"+this.musiclibrary[this.librarysong_selected].title);
+      } else if (this.librarysong_selected != -1){
+        console.log("Loading new song from library :"+ this.musiclibrary[this.librarysong_selected].title);
         this.loadFromLibrary({id: this.librarysong_selected});
       }
       this.closeDialog2();

@@ -4,7 +4,7 @@
             <h1><b>Contact</b></h1>
         </v-card-title >
         <form class="px-4">
-            <v-text-field v-model="name" v-validate="'required|max:10'" :counter="10" :error-messages="errors.collect('name')" label="Name" data-vv-name="name" required></v-text-field>
+            <v-text-field v-model="name" v-validate="'required|max:20'" :counter="20" :error-messages="errors.collect('name')" label="Name" data-vv-name="name" required></v-text-field>
             <v-text-field v-model="email" v-validate="'required|email'" :error-messages="errors.collect('email')" label="E-mail" data-vv-name="email" required></v-text-field>
             <v-select v-model="select" v-validate="'required'" :items="items" :error-messages="errors.collect('select')" label="Select" data-vv-name="select" required></v-select>
             <v-textarea v-model="message" v-validate="'required|max:300'" :counter="300" :error-messages="errors.collect('message')" label="Message" data-vv-name="message" required outline class="mt-4"></v-textarea>
@@ -32,6 +32,8 @@ export default {
       select: null,
       items: [
         'Feedback',
+        'Suggestion',
+        'Issue',
         'Bug/Fix',
         'Other',
       ],
@@ -43,7 +45,7 @@ export default {
         custom: {
           name: {
             required: () => 'Name can not be empty',
-            max: 'The name field may not be greater than 10 characters'
+            max: 'The name field may not be greater than 20 characters'
             // custom messages
           },
           message: {
@@ -69,11 +71,7 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if (result) {
                     this.sendMessage({name: this.name, email:this.email, object:this.select, message: this.message });
-                    this.name = '';
-                    this.email = '';
-                    this.select = null;
-                    this.checkbox = null;
-                    this.message = '';
+                    this.clear()
                     return;
                 }   
             });

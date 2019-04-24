@@ -1,18 +1,18 @@
 <template>
   <v-card height="100%" wdith="100%" style="overflow:hidden;">
     <v-img src="./logo.png" aspect-ratio="2.75"></v-img>
-    <v-card-actions>
-      <v-layout row wrap align-center justify-center>
-        <v-flex xs12 sm6>
+    <v-card-actions min-height="90">
+      <v-layout row wrap justify-space-around fill-height>
+        <v-flex xs12 sm4 md3 lg2 mt-3>
           <div class="text-xs-center" style="width:100%">
-            <v-btn color="blue darken-1" dark large :loading="loading"  @click.native="toggleSong" to="/animation">
-              <v-icon class="mr-2">play_arrow</v-icon> Start now 
+            <v-btn color="blue darken-1" block dark large :loading="loading"  @click.native="toggleSong" to="/animation">
+              <v-icon class="mr-2">play_arrow</v-icon> Start now ! 
             </v-btn>
           </div>
         </v-flex>
-        <v-flex xs12 sm6>
+        <v-flex xs12 sm4 md3 lg2 mt-3>
           <div class="text-xs-center" style="width:100%">
-            <v-btn color="blue darken-1" dark large to="/about">
+            <v-btn color="blue darken-1" block dark large to="/about">
               <v-icon class="mr-2">info</v-icon> Learn More ! 
             </v-btn>
           </div>
@@ -59,7 +59,7 @@ import { mapGetters, mapActions } from 'vuex'
       {id: 0, date:"16 April 2019", version: "1.0.0", title:"Website launch !", description : "Version 1 is out, Music Visualisator is now out online ! Please, enjoy our application and don't hestitate to give us some feedbacks"},
 
     ],
-    roadmap:["Mic support", "More animations", "Account support", "Proper mobile support"]
+    roadmap:["Mic support", "More animations", "More control over animations", "Performance Optimization", "Account support", "Proper mobile support", "Database support for songs"]
     }), 
     computed: {
      ...mapGetters({
