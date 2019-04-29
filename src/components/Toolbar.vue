@@ -1,7 +1,10 @@
 <template>
-  <v-toolbar id="toolbar" color="grey darken-3" app fixed clipped-left>                   
+  <v-toolbar id="toolbar" color="grey darken-3" 
+      app 
+      fixed 
+      clipped-left>                   
     <v-toolbar-title class="white--text">
-    <v-btn flat to="/" class="white--text" active-class style="font-size: 20px;">
+    <v-btn flat to="/" class="white--text" style="font-size: 20px;">
          Music Visualisator 3000  
     </v-btn>                                       
     </v-toolbar-title>                             
@@ -24,16 +27,10 @@ import { mapGetters, mapActions } from 'vuex'
 
 
 export default {
-  name: 'Toolbar',
-  methods: {
-    ...mapActions([
-   	 		'openDrawer'
-   			]),
-  }
+  name: 'Toolbar'
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #toolbar{
   font-family: 'Quicksand', sans-serif;

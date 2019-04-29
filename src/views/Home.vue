@@ -27,7 +27,7 @@
             <v-list-tile-title>
                 <b><i>{{item.version }}</i> &middot; <i>{{item.date}}</i> &middot; {{ item.title}}</b>
             </v-list-tile-title>
-            <v-list-tile-sub-title>
+            <v-list-tile-sub-title style="text-align:justify">
               {{item.description}}
             </v-list-tile-sub-title>
           </v-list-tile-content>
@@ -54,6 +54,7 @@ import { mapGetters, mapActions } from 'vuex'
     data: () => ({
     loading : true,
     updates : [
+      {id: 3, date:"24 April 2019", version: "1.1.1", title: "UI Improvement", description: "We fixed UI bugs and added some improvement too, making the whole interface clearer !"},
       {id: 2, date:"20 April 2019", version: "1.1.0", title: "Adding Content", description: "Adding songs, new buttons aswell as new tabs in the About section! You can now contact us through our form ! Fixes minor bugs too."},
       {id: 1, date:"19 April 2019", version: "1.0.1", title: "Minor fixes !", description: "Fixes of visuals glitches and bug on Google Chrome Browser regarding file input !"},
       {id: 0, date:"16 April 2019", version: "1.0.0", title:"Website launch !", description : "Version 1 is out, Music Visualisator is now out online ! Please, enjoy our application and don't hestitate to give us some feedbacks"},

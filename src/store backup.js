@@ -462,7 +462,6 @@ const mutations = {
         if(count2 > 4){
           count2 = 0;
         }
-        
       }
 
       p.radialFFT_triangles_rad = function(){

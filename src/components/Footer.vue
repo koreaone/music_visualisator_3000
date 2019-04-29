@@ -38,12 +38,7 @@
           <v-divider></v-divider>
           <v-card-text>
             <v-radio-group v-model="anim_1" column>
-              <v-radio label="Circles line" value="circle_line"></v-radio>
-              <v-radio label="Infinity hole" value="radial_lines"></v-radio>
-              <v-radio label="Flower Points" value="radial_points"></v-radio>
-              <v-radio label="Flower Shape" value="radial_triangles"></v-radio>
-              <v-radio label="Simple Bars" value="simple_bar"></v-radio>
-              <v-radio label="Simple Circle" value="simple_circle"></v-radio>
+              <v-radio v-for="item in anim_list" :key="item.id" :label="item.name" :value="item.value"></v-radio>
             </v-radio-group>
           </v-card-text>
           <v-divider></v-divider>
@@ -65,16 +60,6 @@
           
           <v-card flat tile width="100%">
             <v-card-title><b>Choose from our library !</b></v-card-title>
-            <!-- <v-list>
-              <v-list-tile v-for="item in musiclibrary" :key="item.id" @click="SetNewChoice(item.id)">
-                <v-list-tile-action>
-                  <v-icon :class="{'pink--text': item.id == librarysong_selected, 'white--text': item.id != librarysong_selected}">music_note</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                  <v-list-tile-title v-text="item.title"></v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-            </v-list> -->
             <v-select v-model="librarysong_selected" :items="musiclibrary" label="Pick a song !" outline class="px-4"  item-value="id" item-text="title" :change="SetNewChoice()"></v-select>
           </v-card>
           <v-divider></v-divider>
@@ -101,7 +86,7 @@ export default {
   data: () => ({
     volumeFooter : 5,
     seek : 0,
-    anim_1: 'radial_lines',
+    anim_1: 'radialFFT_points_circular',
     dialog: false,
     dialog2: false,
     file: null,
@@ -111,7 +96,6 @@ export default {
   }),
   computed: {
      ...mapGetters({
-        playstate : 'getPlaystate',
         playicon : 'getPlayicon',
         volume : 'getSongVolume',
         muted : 'getMutedState',
@@ -122,6 +106,7 @@ export default {
         musiclibrary : 'getMusicLibrary',
         songready : 'getSongready',
         isRandom : 'getRandomState',
+        anim_list : 'getAnimationList'
      }),
      volumeIcon(){
        if(this.volumeFooter > 5){
@@ -200,6 +185,8 @@ export default {
     },
     changeAnimation: function(){
       this.dialog = false;
+      console.log(this.anim_1
+      )
       this.setAnim({option_1 : this.anim_1});
     },
     checkfile: function(){

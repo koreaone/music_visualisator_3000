@@ -415,10 +415,10 @@ const mutations = {
         p.radialFigure_lines(maxRadius * 0.1, 180 - count1, colors[D]);
         count1+=0.003;
         count2+=0.002;
-        if(count1 > 4){
+        if(count1 > 1){
           count1 = 0;
         }
-        if(count2 > 4){
+        if(count2 > 1){
           count2 = 0;
         }
       }
@@ -456,13 +456,12 @@ const mutations = {
         p.radialFigure_triangles(maxRadius * 0.3, 180 - count1, colors[D], 160);
         count1+=0.003;
         count2+=0.002;
-        if(count1 > 4){
+        if(count1 > 1){
           count1 = 0;
         }
-        if(count2 > 4){
+        if(count2 > 1){
           count2 = 0;
         }
-        
       }
 
       p.radialFFT_triangles_rad = function(){
@@ -475,10 +474,10 @@ const mutations = {
         p.radialFigure_triangles_rad(maxRadius * 0.3, 180 - count1, colors[D], 160);
         count1+=0.003;
         count2+=0.002;
-        if(count1 > 4){
+        if(count1 > 1){
           count1 = 0;
         }
-        if(count2 > 4){
+        if(count2 > 1){
           count2 = 0;
         }
       }
@@ -492,10 +491,10 @@ const mutations = {
         p.radialFigure_triangles_flower(140, 180 - count1, colors[D], 160);
         count1+=0.003;
         count2+=0.002;
-        if(count1 > 4){
+        if(count1 > 1){
           count1 = 0;
         }
-        if(count2 > 4){
+        if(count2 > 1){
           count2 = 0;
         }
       }
@@ -538,11 +537,12 @@ const mutations = {
         p.strokeWeight(2);
         p.fill(grey * levels)
         p.beginShape(p.TRIANGLES);
-        var minRadius = 0;
+        var minRadius =50*levels
+        maxRadius+=50*levels
         for (var i = 0; i < spectrum.length-1; i+=1) {
-          var angle = p.map(i, 0, spectrum.length, 0, 400 + Math.sin(offset) * 7 );
+          var angle = p.map(i, 0, spectrum.length, 0, 300 + Math.sin(offset) * 7 );
           var amp = spectrum[i];
-          var r = p.map(amp, 0, 255, minRadius + 50 * levels, maxRadius + 50 * levels);
+          var r = p.map(amp, 0, 255, minRadius, maxRadius);
           var x = r * Math.cos(angle + offset);
           var y = r * Math.sin(angle + offset);
           p.vertex(x, y);
