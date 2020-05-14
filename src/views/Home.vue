@@ -5,15 +5,23 @@
       <v-layout row wrap justify-space-around fill-height>
         <v-flex xs12 sm4 md3 lg2 mt-3>
           <div class="text-xs-center" style="width:100%">
-            <v-btn color="blue darken-1" block dark large :loading="loading"  @click.native="toggleSong" to="/animation">
-              <v-icon class="mr-2">play_arrow</v-icon> Start now ! 
+            <v-btn
+              color="blue darken-1"
+              block
+              dark
+              large
+              :loading="loading"
+              @click.native="toggleSong"
+              to="/animation"
+            >
+              <v-icon class="mr-2">play_arrow</v-icon> Start now !
             </v-btn>
           </div>
         </v-flex>
         <v-flex xs12 sm4 md3 lg2 mt-3>
           <div class="text-xs-center" style="width:100%">
             <v-btn color="blue darken-1" block dark large to="/about">
-              <v-icon class="mr-2">info</v-icon> Learn More ! 
+              <v-icon class="mr-2">info</v-icon> Learn More !
             </v-btn>
           </div>
         </v-flex>
@@ -25,10 +33,13 @@
         <v-list-tile v-for="item in updates" :key="item.id">
           <v-list-tile-content>
             <v-list-tile-title>
-                <b><i>{{item.version }}</i> &middot; <i>{{item.date}}</i> &middot; {{ item.title}}</b>
+              <b
+                ><i>{{ item.version }}</i> &middot;
+                <i>{{ item.date }}</i> &middot; {{ item.title }}</b
+              >
             </v-list-tile-title>
             <v-list-tile-sub-title style="text-align:justify">
-              {{item.description}}
+              {{ item.description }}
             </v-list-tile-sub-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -38,9 +49,9 @@
       <h2><b> Road map</b></h2>
       <v-list>
         <v-list-tile v-for="item in roadmap" :key="item">
-            <v-list-tile-title>
-                <b>&middot; {{item}}</b>
-            </v-list-tile-title>
+          <v-list-tile-title>
+            <b>&middot; {{ item }}</b>
+          </v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-card-text>
@@ -48,43 +59,73 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from "vuex";
 
-  export default {
-    data: () => ({
-    loading : true,
-    updates : [
-      {id: 3, date:"24 April 2019", version: "1.1.1", title: "UI Improvement", description: "We fixed UI bugs and added some improvement too, making the whole interface clearer !"},
-      {id: 2, date:"20 April 2019", version: "1.1.0", title: "Adding Content", description: "Adding songs, new buttons aswell as new tabs in the About section! You can now contact us through our form ! Fixes minor bugs too."},
-      {id: 1, date:"19 April 2019", version: "1.0.1", title: "Minor fixes !", description: "Fixes of visuals glitches and bug on Google Chrome Browser regarding file input !"},
-      {id: 0, date:"16 April 2019", version: "1.0.0", title:"Website launch !", description : "Version 1 is out, Music Visualisator is now out online ! Please, enjoy our application and don't hestitate to give us some feedbacks"},
-
+export default {
+  data: () => ({
+    loading: true,
+    updates: [
+      {
+        id: 3,
+        date: "24 April 2019",
+        version: "1.1.1",
+        title: "UI Improvement",
+        description:
+          "We fixed UI bugs and added some improvement too, making the whole interface clearer !",
+      },
+      {
+        id: 2,
+        date: "20 April 2019",
+        version: "1.1.0",
+        title: "Adding Content",
+        description:
+          "Adding songs, new buttons aswell as new tabs in the About section! You can now contact us through our form ! Fixes minor bugs too.",
+      },
+      {
+        id: 1,
+        date: "19 April 2019",
+        version: "1.0.1",
+        title: "Minor fixes !",
+        description:
+          "Fixes of visuals glitches and bug on Google Chrome Browser regarding file input !",
+      },
+      {
+        id: 0,
+        date: "16 April 2019",
+        version: "1.0.0",
+        title: "Website launch !",
+        description:
+          "Version 1 is out, Music Visualisator is now out online ! Please, enjoy our application and don't hestitate to give us some feedbacks",
+      },
     ],
-    roadmap:["Mic support", "More animations", "More control over animations", "Performance Optimization", "Account support", "Proper mobile support", "Database support for songs"]
-    }), 
-    computed: {
-     ...mapGetters({
-        loading_state : 'getAnimready'
-     })
+    roadmap: [
+      "Mic support",
+      "More animations",
+      "More control over animations",
+      "Performance Optimization",
+      "Account support",
+      "Proper mobile support",
+      "Database support for songs",
+    ],
+  }),
+  computed: {
+    ...mapGetters({
+      loading_state: "getAnimready",
+    }),
+  },
+  methods: {
+    ...mapActions(["toggleSong"]),
+  },
+  watch: {
+    loading_state(newVal, oldVal) {
+      this.loading = !newVal;
     },
-    methods : {
-      ...mapActions([
-   	 		'toggleSong'
-         ]),
-    },
-    watch: {
-      loading_state(newVal, oldVal){
-        this.loading = !newVal;
-      }
-    },
-    mounted: function () {
-
-      this.loading = !this.loading_state;
-    }
-
-  }
+  },
+  mounted: function() {
+    this.loading = !this.loading_state;
+  },
+};
 </script>
-
 
 <style scoped>
 h3 {
